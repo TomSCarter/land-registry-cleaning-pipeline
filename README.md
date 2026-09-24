@@ -5,7 +5,7 @@ Cleaning pipeline for HM Land Registry Price Paid Data (2025), built as part of 
 ## Dataset
 
 - **Source:** [HM Land Registry Price Paid Data](https://www.gov.uk/government/statistical-data-sets/price-paid-data-downloads)
-- **Scope:** 2025 single-year extract (~129MB)
+- **Scope:** 2025 single-year extract (162 MB)
 - **Location:** `data/raw/` (not tracked in git — see Setup)
 
 ## Project Structure
