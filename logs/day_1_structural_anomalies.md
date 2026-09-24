@@ -9,40 +9,64 @@
     - transaction_id (str)
         - Bracketed hexadecimal
         - 0 null
+        - all unique
     - price (int64)
         - Integer numbers
         - 0 null
+        - 30301 unique
+        - No starting symbols (£ etc)
+        - 540 <£1000 inc 5 for £1
+        - 8 > £100 million, inc 1 at £793 million
     - date_of_transfer (str)
         - should be timestamp
         - 0 null
+        - 364 unique
+        - No sales on 27th December
     - postcode (str)
         - 2339 null
+        - 548539 unique
     - property_type (str)
         - 0 null
+        - 5 unique (T, S, D, F, O)
     - old_new (str)
         - 0 null
+        - 2 unique
     - duration (str)
         - 0 null
-    - paon (str)
+        - 2 unique (F or L)
+    - paon (str) - House number or name
         - could be int
         - 0 null
-    - saon (str)
+        - 80138 unique
+    - saon (str) - second address object (e.g. Flat 2)
         - 840679 null
+        - 7624 unique
     - street (str)
         - 15688 null
+        - 185840 unique
+        - Contains 11 with a comma (e.g. FOURTH STREET, WATLING STREET BUNGALOWS)
     - locality (str)
         - 587665 null
+        - 16521 unique
+        - 9 for Westward Ho!
     - town_city (str)
         - 0 null
+        - 1146 unique
     - district (str)
         - 0 null
+        - 318 unique
+        - BOURNEMOUTH, CHRISTCHURCH AND POOLE
     - county (str)
         - 0 null
+        - 113 unique
+        - BOURNEMOUTH, CHRISTCHURCH AND POOLE
     - ppd_category_type (str)
         - 0 null
+        - 2 unique
     - record_status (str)
         - 0 null
-
+        - 1 unique (all A)
+- No duplicated rows
 Steps to work through:
 
 Load and inspect without assumptions. Open the file and check: does it load cleanly with default settings, or does something choke (encoding error, wrong delimiter, extra/missing header row)? Note whatever goes wrong before you fix it.
