@@ -6,7 +6,7 @@
 
 ### Single year 2025 national price data audit
 
-- part_1_anomalies.ipynb
+- part_1_LRPD_anomalies_2025.ipynb
 
 - Loaded data and added header of column names
     - Column descriptions and names here: https://www.gov.uk/guidance/about-the-price-paid-data#explanations-of-column-headers-in-the-ppd
@@ -92,5 +92,82 @@
 - UPRN (Unique Property Reference Number) is contained in the EPC data but unfortunately the UPRN lookup table availible on Land Registry site only covers Aug 2026 onward. Therefore the join will require address matching.
 
 - There is a paper detailing this method (reference to add) which obtained a 79% matching rate. This will be a good benchmark to work toward.
+
+- part_1_LRPD_anomalies_2015_2025.ipynb
+
+- Downloaded data from HM Land Regisry Open Data report builder
+    https://landregistry.data.gov.uk/app/ppd
+- Loaded data 
+    - Columns have changed slightly compared to above. saon/paon switched places. now includes url in place of record_status. ppd_category_type is now transaction_category
+- shape: (135557, 16)
+- Column by column audit
+    - unique_id (str)
+        - Bracketed hexadecimal
+        - 0 null
+        - all unique
+    - price_paid (int64)
+        - Integer numbers
+        - 0 null
+        - 8779 unique
+        - No starting symbols (£ etc)
+        - 20 <£1000
+        - 1 > £100 million, at £414 million
+            - Far less ultra-expensive properties than in the national dataset
+    - deed_date (str)
+        - should be timestamp
+        - 0 null
+        - 3002 unique (ca. 300 per year)
+        - breakdown by days of week
+            - 45% sales on Friday close to 3 times any other day
+            - 0.1% on each of Sat and Sun
+        - unique deed_dates per month each year vary from 18 to 28, rather than the expected 28-31
+        - It is likely the missing days are weekends (ca. 100 possible missing days per year)
+    - postcode (str)
+        - 442 null
+        - 16536 unique
+        - Performed regex check and found no incorrectly formatted postcodes ("^[A-Z]{1,2}\d[A-Z0-9]? \d[A-Z]{2}$")
+    - property_type (str)
+        - 0 null
+        - 5 unique (T, S, D, F, O)
+    - new_build (str)
+        - 0 null
+        - 2 unique
+    - estate_type (str)
+        - 0 null
+        - 2 unique (F or L)
+    - saon (str) - second address object (e.g. Flat 2)
+        - 123737 null
+        - 1151 unique
+    - paon (str) - House number or name
+        - could be int
+        - 0 null
+        - 11542 unique
+    - street (str)
+        - 3255 null
+        - 8178 unique
+    - locality (str)
+        - 77985 null
+        - 496 unique
+    - town (str)
+        - 0 null
+        - 26 unique
+    - district (str)
+        - 0 null
+        - 5 unique
+    - county (str)
+        - 0 null
+        - 1 unique
+    - transaction_category (str)
+        - 0 null
+        - 2 unique
+    - linked_data_url (str)
+        - 0 null
+        - 135557 unique (links to land registry website)
+- No fully duplicated rows
+
+- No unallowed special characters in street, town, locality, district, county
+    - Allowed characters ([^&a-zA-Z0-9'.\s-])
+    - Accented characters would be flagged.
+    - No non-standard or accented characters were detected 
 
 ### EPC Structural Audit
