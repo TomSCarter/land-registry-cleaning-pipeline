@@ -25,6 +25,8 @@
     - postcode (str)
         - 2339 null
         - 548539 unique
+        - All 6-8 characters
+        - Performed regex check and found no incorrectly formatted postcodes ("^[A-Z]{1,2}\d[A-Z0-9]? \d[A-Z]{2}$")
     - property_type (str)
         - 0 null
         - 5 unique (T, S, D, F, O)
@@ -66,19 +68,12 @@
     - record_status (str)
         - 0 null
         - 1 unique (all A)
-- No duplicated rows
-Steps to work through:
+- No fully duplicated rows
 
-Load and inspect without assumptions. Open the file and check: does it load cleanly with default settings, or does something choke (encoding error, wrong delimiter, extra/missing header row)? Note whatever goes wrong before you fix it.
-
-Column-by-column audit. For each column, ask: what data type do I expect, and does what's actually there match? Look for mixed types in one column (numbers stored as text, stray currency symbols in a price field), inconsistent categorical values ("Detached" vs "D" vs "detached "), and unexpected NaN/null representations (empty string vs "NULL" vs "N/A" vs a genuinely blank cell).
-
-Character-level check. Land Registry data pulls in address/locality text, which is a classic source of encoding corruption — look for mangled apostrophes, stray accented characters, or replacement-character glyphs (often shows as �). Note where these appear, not just that they exist.
-
-Duplicate and structural row checks. Are there fully duplicated rows? Rows with a wrong number of fields (a stray comma inside an unquoted address breaking column alignment)?
-
-Write the log. For each issue: what it is, which column(s), roughly how many rows affected (a count, even approximate), and a one-line note on what it implies for cleaning later (e.g. "will need .str.extract() for postcode" — but don't build that yet, just flag it).
-
-A concrete deliverable for today: a markdown or text file, day1_anomaly_log.md, listing every issue found, evidence (row examples), and severity/frequency — nothing else touched or modified.
-
-One general technique worth knowing generically (not solving your task, just the pattern): to count how many non-ASCII characters exist in a text column without altering anything, you inspect each string's byte/character composition against the ASCII range and tally matches — that's the general idea behind step 3; how you implement it against your actual columns is your part.
+- Special characters in street, town_city, locality, district, county
+    - Special characters exist but are legitimate
+        - Commas in compound place names
+        - Westward Ho!
+    - Only  comma and explanation mark were found outside my allowed characters ([^&a-zA-Z0-9'.\s-])
+    - Accented characters would be flagged.
+    - No non-standard or accented characters were detected 
