@@ -1,6 +1,12 @@
-# Land Registry Price Data (2025)
+# Land Registry Price Data Analysis
 
-## Day 1 - Structural audit
+## Part 1 - Structural audit
+
+- Scope changes: Scope was changed from 2025 national prices to 2015-2025 Oxfordshire only, but with joining of Energy Performance Certificate (EPC) dataset.
+
+### Single year 2025 national price data audit
+
+- part_1_anomalies.ipynb
 
 - Loaded data and added header of column names
     - Column descriptions and names here: https://www.gov.uk/guidance/about-the-price-paid-data#explanations-of-column-headers-in-the-ppd
@@ -74,6 +80,17 @@
     - Special characters exist but are legitimate
         - Commas in compound place names
         - Westward Ho!
-    - Only  comma and explanation mark were found outside my allowed characters ([^&a-zA-Z0-9'.\s-])
+    - Only  comma and exclamation mark were found outside my allowed characters ([^&a-zA-Z0-9'.\s-])
     - Accented characters would be flagged.
     - No non-standard or accented characters were detected 
+
+
+### 2015-2025 Oxfordshire only price data audit
+
+- The 2025 data was found to not require cleaning and did not contain sufficient parameters for future prediction and analysis projects (including ML, segmentation etc). It was therefore decided to take a 10 year slice for Oxfordshire and join it with domestic Energy Performance Certificate (EPC) data.
+
+- UPRN (Unique Property Reference Number) is contained in the EPC data but unfortunately the UPRN lookup table availible on Land Registry site only covers Aug 2026 onward. Therefore the join will require address matching.
+
+- There is a paper detailing this method (reference to add) which obtained a 79% matching rate. This will be a good benchmark to work toward.
+
+### EPC Structural Audit
