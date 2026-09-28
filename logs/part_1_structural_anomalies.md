@@ -170,13 +170,14 @@
     - Accented characters would be flagged.
     - No non-standard or accented characters were detected 
 
-  ### EPC Structural Audit
+### EPC Structural Audit
 
 - Shape: (216054, 93)
 - 3 empty columns to be dropped: 'floor_level', 'sheating_energy_eff', 'sheating_env_eff'
-- Columns in/out of scope:
 
-**Identity/linkage — essential:**
+**Columns in/out of scope**:
+
+**Identity/linkage** — essential:
 'certificate_number', 'address1', 'address2', 'address3', 'postcode', 'posttown', 'address', 'local_authority', 'local_authority_label', 'uprn', 'uprn_source'.
 
 - 'constituency', 'constituency_label', 'region' and 'country' not needed
@@ -218,3 +219,8 @@
 
 **Drop — low relevance to goals:**
 'energy_tariff', 'flat_top_storey', 'glazed_area', 'glazed_type', 'heat_loss_corridor', 'mains_gas_flag', 'mechanical_ventilation', 'multi_glaze_proportion', 'number_open_fireplaces', 'photo_supply', 'solar_water_heating_flag', 'unheated_corridor_length', 'wind_turbine_count', 'main_fuel', 'main_heating_controls', 'report_type', 'fixed_lighting_outlets_count', 'low_energy_lighting', 'low_energy_fixed_lighting_outlets_count'. Mostly building-physics detail unlikely to matter for the price-drivers/segmentation project
+
+**Data audit**
+- Core numeric features
+    - total_floor_area
+        - 
