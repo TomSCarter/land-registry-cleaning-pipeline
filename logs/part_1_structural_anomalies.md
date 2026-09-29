@@ -171,7 +171,7 @@
     - No non-standard or accented characters were detected 
 
 ### EPC Structural Audit
-
+- Downloaded from https://get-energy-performance-data.communities.gov.uk/
 - Shape: (216054, 93)
 - 3 empty columns to be dropped: 'floor_level', 'sheating_energy_eff', 'sheating_env_eff'
 
@@ -220,7 +220,104 @@
 **Drop — low relevance to goals:**
 'energy_tariff', 'flat_top_storey', 'glazed_area', 'glazed_type', 'heat_loss_corridor', 'mains_gas_flag', 'mechanical_ventilation', 'multi_glaze_proportion', 'number_open_fireplaces', 'photo_supply', 'solar_water_heating_flag', 'unheated_corridor_length', 'wind_turbine_count', 'main_fuel', 'main_heating_controls', 'report_type', 'fixed_lighting_outlets_count', 'low_energy_lighting', 'low_energy_fixed_lighting_outlets_count'. Mostly building-physics detail unlikely to matter for the price-drivers/segmentation project
 
+**Definitions of kept columns** (from Domestic EPC Data Dictionary found here https://get-energy-performance-data.communities.gov.uk/guidance/data-dictionary):
+- **certificate_number**: The unique reference number assigned to the Energy Performance Certificate.
+- **address1**: The first line of the property address.
+- **address2**: The second line of the property address.
+- **address3**: The third line of the property address.
+- **postcode**: The postcode of the property.
+- **posttown**: The post town of the property address.
+- **address**: The full address of the property.
+- **local_authority**: The local authority code associated with the property.
+- **local_authority_label**: The official name of the local authority.
+- **built_form**: Describes the built form or structural layout of the property (e.g., Detached, Semi-Detached, Terraced).
+- **construction_age_band**: Describes the construction period or age band during which the property was built.
+- **current_energy_efficiency**: The estimated current energy efficiency rating score of the property.
+- **current_energy_rating**: How energy efficient the property currently is on the A–G band scale.
+- **energy_consumption_current**: An estimate of current primary energy consumption of the property.
+- **extension_count**: The total number of extensions added to the property.
+- **flat_storey_count**: The total number of storeys in the block containing the flat.
+- **floor_height**: The average room height of the property.
+- **heating_cost_current**: An estimate of current heating cost for the property.
+- **inspection_date**: The date when information was collected during the property inspection.
+- **lodgement_date**: The date the energy performance certificate was lodged on the register.
+- **number_habitable_rooms**: The total number of habitable rooms in the property.
+- **number_heated_rooms**: The total number of heated rooms in the property.
+- **potential_energy_efficiency**: The estimated potential energy efficiency rating score after recommendations are implemented.
+- **property_type**: Describes the kind of property (e.g., House, Flat, Bungalow, Maisonette).
+- **tenure**: Describes the tenure type of the property (e.g., Owner-occupied, Rented).
+- **total_floor_area**: The total enclosed floor area of the property in square metres.
+- **transaction_type**: States why the energy performance certificate was created (e.g., market for sale, rental).
+- **uprn**: The Unique Property Reference Number assigned to the address.
+- **uprn_source**: The method or source by which the UPRN was generated or matched.
+
+
 **Data audit**
 - Core numeric features
     - total_floor_area
-        - 
+        - mean = 97, median = 83, min = 3, max = 5133, 75% = 111
+        - There are 27 records with < 10 sqm floor areas and 8 with > 2000 sqm
+            - 19 records are flats in the same building (7 or 9 sqm) with 1 habitable room
+            - 1 is a room of 3 sqm
+            - 7 are records with 2-4 habitable rooms but 5-9 sqm floor area (each room <= 3 sqm)
+                - 3 are house or maisonette, size is too small to be real, exclude
+                - 4 are flats.
+                -  This is well below any plausible bedroom size. *Proposed: Exclude these 7 records with multiple rooms and < 9 sqm. Exclude the record with 3 sqm. Flag the 19 records that are 1 room flats (7-9 sqm) and check sale prices after join before deciding.*
+        - There are 8 records with > 2000 sqm
+            - 2 have NaN habitable rooms
+            - 5 have 3 - 7 habitable rooms (implausible)
+            - 1 has 39 habitable rooms (plausible)
+            - perhaps average floor area per habitable room would be a good measure. These have up to 1209 sqm per room.
+                - On full dataset it ranges from 0.8 sqm/room to 1209 sqm/room, median 20 sqm, mean 21 sqm.
+            - *Proposed: Exclude the 7 records with >2000 sqm and <= 7 rooms (8206-7322-4290-4245-7906, 0552-3041-5201-3644-6204, 1032-5920-2209-0815-0202, 0044-2876-6518-9608-3961, 8171-6324-5580-7887-6996, 3434-1132-3000-0328-7226, 5135-0635-7000-0689-9206)*
+        - Small areas will have a larger effect on £ per sqm calculations later, so important to clean.
+    - 'number_habitable_rooms', 'number_heated_rooms', 'extension_count', 'flat_storey_count', 'floor_height'
+        - The range of values for number_habitable_rooms is 1.0 to 81.0, with median of 4.0
+        - The range of values for number_heated_rooms is 0.0 to 55.0, with median of 4.0
+            - Max room counts will need floor size to audit (or my sqm/room calculation), but 81 or 55 rooms is high
+            - Zero heated rooms is implausible (338 records). *Proposed: Treat records with 0 heated rooms as value is missing.*
+        - The range of values for 'extension_count' is 0.0 to 4.0, with median of 0.0
+            - Reasonable
+        - The range of values for 'flat_storey_count' is 1.0 to 9.0, with median of 2.0
+            - null in only 5016 records
+            - 430 records with 'flat_storey_count' > 3 (428 Houses). 11 records with 'flat_storey_count' > 4 (11 Houses, up to 9 storeys). 
+            - Refering to the Official Data Dictionary (https://get-energy-performance-data.communities.gov.uk/guidance/data-dictionary) defines this column as "The total number of floors in the apartment block, including the ground floor and any basement levels.
+            ". 
+                - Given this is only null in 5016 records, when it would be expected to be null in all Houses (ca. 151,000), it is likely that assessors are inputting the properties storey count. *Proposed: Drop. Appears to be systematically misused outside of its defined scope.*
+        - The range of values for 'floor_height' is 0.0 to 8.87, with median of 2.38
+            - 53 records with 'floor height' > 5m. Many are built <1900. Believable for say converted churches or houses with mezzanine?
+            - There are 2516 records with 'floor height' < 1.5m. Including 98 records with 'floor height' < 1m. *Proposed: Treat records with floor height < 1.5m as missing.*
+        - Nulls
+            - There are 49419 records with null for all of 'number_habitable_rooms', 'number_heated_rooms', 'extension_count'
+                - These are disproportionately new dwellings (91% vs 21% new dwellings in wider sample)
+                - All New dwelling records ('transaction_type') have null 'number_heated_rooms'. This is consistent with a different type of assessment for new builds.
+                - Remaining ca. 4400 null records are unexplained. *Proposed: Revisit on Part 4*
+            - 'flat_storey_count' is null in 5016 cases
+                - Distribution of 'property_type' (e.g. flat vs house etc) slightly skewed toward flats (21 vs 32%)
+            - 'floor_height'
+                - 1615 null values. 99% are for Flats where the 'floor_height' is likely to be very standardised. *Proposed: Fill flat nulls with the median flat floor_height and add an imputed flag column.*
+    - 'certificate_number' is unique with no missing values. None flagged as duplicated
+    - Each 'uprn' has up to 50 'certificate_number' associated with it. 26776 flagged as duplicated
+        - *Proposed: select one certificate per UPRN in Day 3 (most likely most recent inspection_date at or before the sale)*
+- Categorical values
+| Column | Unique values | Top values | Placeholders / anomalies | Proposed treatment |
+|---|---|---|---|---|
+| `property_type` | 5|House, Flat |'Not Recorded'  (1305, 0.6%)  |None needed|
+| `built_form` | 7|Semi-Detached, Detached | | |
+| `construction_age_band` | 67|England and Wales: 1950-1966, England and Wales: 1967-1975 |Mixture of bands and specific years. 201 as year|Convert single years into bands and exclude 201 as an error|
+| `tenure` |4 |owner-occupied, rented (private) | | |
+| `transaction_type` |14 |Marketed sale, Rental  |Contains 'None of the above' |Likely none needed as less common types may not correspond to a sale |
+| `current_energy_rating` | 7|C, D, B | | |
+| `uprn_source` |2 |Energy Assessor, Address Matched  | | |
+- 'inspection_date' & 'lodgement_date'
+    - format: YYYY-MM-DD
+    - 'lodgement_date' fully within intended 2015-01-01 - 2015-12-31 limits
+    - 468 records where the 'inspection_date' falls in 2014 but 'lodgement_date' is in 2015
+    - No 'inspection_date' after 2025-12-31
+    - No 'inspection_date' or 'lodgement_date' records are null
+- Can confirm 'address' is a combination of 'address1', 'address2' and 'address3'
+- Mapping of EPC 'property_type' codes to Price Paid 'property_type' deferred to part 2
+- Checking 'current_energy_rating' against 'current_energy_efficiency'
+    - Calculated energy ratings from efficiency. Perfect agreement between.
+    - Worth noting that the efficiency can go over 100 if a property generates more energy (ultra-modern properties with renewable energy generation) than it uses. There are 417 records with efficiency > 100 inc 41 with efficiency > 110.
+    - There are 6 records with an efficiencies over 110 but with positive 'energy_consumption_current'. These are edge cases, unusual but plausible as they may still use a large amount of energy in winter months. Two have energy_consumption_current >200 and are Maisonette/Flat which flags them as likely errors. *Proposed: Exclude 2051-7735-3040-1307-9975 and 0061-1212-2504-8687-0900*
