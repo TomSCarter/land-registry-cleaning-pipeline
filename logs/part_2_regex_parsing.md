@@ -25,3 +25,7 @@
     - Generated combined address fields (space sep) for both tables and upper case epc_'address'
     - Created an 'address_tokens' field in both tables, splitting the combined addresses into frozensets
     - Inner join on 'address_tokens' gives a table with 107935 rows. But due to the multiple EPC per property, properties are duplicated. 96461 unique property rows ('unique_id') corresponding to a 71.2% match rate.
+
+- Second join
+    - Removed commas from all matching fields
+    - 110478 rows, 98784 properties with EPC matches, match rate 72.9%
