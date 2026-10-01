@@ -35,9 +35,9 @@
     - Leaving 19238 rows with after sale EPCs
         - If we take this set and drop all but the EPC with closest date to the sale we get 18140 rows (these properties could also have rows with pre-sale EPCs in the other set)
             - median days after sale is 1418 day (ca. 4 years), 75th percentile of 630 days.
-            - *Decision: Drop all properties with EPCs after sale. Return to filter more specifically if time allows.*
+            - *Decision: Drop all properties with EPCs after sale.*
 
-- Funnel
+- Second Join Funnel
     - 135,557 total Price Paid property transactions
         - 216,054 EPC records
     - 98,784 found exact address-token match (72.9%)
@@ -99,7 +99,26 @@
 = Third join (subset matching)
     - Matched on postcode then on PP address_tokens being a subset of EPC address_tokens
     - Gave 105419 matches (77.8% match rate)
-    - But contains duplicates due to multiple EPCs for a single property
+    - 975 unique_ids matched to >1 uprn (in EPC set)
+        - e.g. 4 Churchill road OX5 1BN subset matched to both correct and 'APARTMENT 4 THE LOFTS 7 CHURCHILL ROAD OX5 1BN'
+            - Fundamental flaw to subset matching
+        - RIVERSIDE COURT 9 9 WEST WAY  OX2 0FL matched to 43 uprn's. Happens because one of the '9's is lost when a token set is made. Which then matches with the many flats at 'RIVERSIDE COURT 9 West Way OX2 0FL'.
+            - 3113 records in full PP set have fewer values in 'address_tokens' than words in 'address'
+        - 219 (22.5%) of the 975 records lost duplicate words during the token set formation, hindering subset matching.
+        - Would be possible to refactor subset matching to avoid losing duplicates to sets (e.g. use ordered lists) but not implemented due to time constraints.
+        - Drop the 975 records
+    - But still contains duplicates due to multiple EPCs for a single property
     - Filtered to EPCs with inspection_date closest to deed_date (but not after)
-    - 91938 matches, 67.8% match rate
-    - Subset matching recovered 5580 additional usable matches over exact matching.
+    - 91150 matches, 67.2% match rate
+    Summary:
+    - Subset matching recovered 4792 additional usable matches over exact matching and improved match rate from 63.7% to 67.2%
+    - Identified 2 key failure modes
+        - Token deduplication removing a distinguishing repeated number (Riverside Court)
+        - A short/plain address being a structural subset of an unrelated longer address at the same postcode (Churchill Road)
+        - Third Join Funnel
+            - 135,557 total Price Paid property transactions
+                - 216,054 EPC records
+            - 105,419 found subset address-token match (77.8%)
+            - 104,444 matched to a single uprn (77.0%)
+            - 91,150 have a usable pre-sale EPC (67.2%)
+            - 13,294 matched an address but have no usable pre-sale EPC (9.8%)
