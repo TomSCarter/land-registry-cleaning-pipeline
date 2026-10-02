@@ -87,7 +87,7 @@
 
 ### 2015-2025 Oxfordshire only price data audit
 
-- The 2025 data was found to not require cleaning and did not contain sufficient parameters for future prediction and analysis projects (including ML, segmentation etc). It was therefore decided to take a 10 year slice for Oxfordshire and join it with domestic Energy Performance Certificate (EPC) data.
+- The 2025 data was found to not require cleaning and did not contain sufficient parameters for future prediction and analysis projects (including ML, segmentation etc). It was therefore decided to take a 11 year slice for Oxfordshire and join it with domestic Energy Performance Certificate (EPC) data.
 
 - UPRN (Unique Property Reference Number) is contained in the EPC data but unfortunately the UPRN lookup table availible on Land Registry site only covers Aug 2026 onward. Therefore the join will require address matching.
 
