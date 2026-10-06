@@ -15,7 +15,18 @@ def read_price_paid(data_path, pp_filename):
     return out
 
 def read_epc(data_path, epc_filename, epc_cols):
+    """Read EPC CSV, select columns, set dtypes (dates, UPRN as Int64)"""
+    file = Path(data_path) / epc_filename
+    if not file.exists():
+        raise FileNotFoundError(f"No EPC file found in {data_path} with {epc_filename}")
+    out = pd.read_csv(file, usecols= epc_cols)
     
-
+    out['inspection_date'] = out['inspection_date'].astype('datetime64[ns]')
+    out['lodgement_date'] = out['lodgement_date'].astype('datetime64[ns]')
+    out['uprn'] = out['uprn'].astype('Int64') # pandas nullable integer type instead of int64 numpys which is not nullable
+    return out
 
 def filter_local_authorities(epc, target_local_authorities):
+    """Filter EPC to the five target local authorities"""
+    out = epc[epc['local_authority'].isin(target_local_authorities)]
+    return out
