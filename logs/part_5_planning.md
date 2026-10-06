@@ -47,7 +47,6 @@
 - **Name:** remove_commas
 - **Inputs:** df, address_cols
 - **Output:** df
-- **Reports:** commas removed per column
 
 #### Build combined address string (uppercase)
 - **Name:** build_address
