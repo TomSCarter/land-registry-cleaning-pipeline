@@ -147,6 +147,7 @@ Functions return only the DataFrame. The pipeline class records counts around ea
 - Pre-sale EPC selection: ties on inspection_to_sale broken by latest lodgement_date (likely a corrected certificate). Previously arbitrary. Ties found: 670 sales (0.7%) had two or more certificates tied for closest pre-sale inspection; previously chosen arbitrarily, now resolved by latest lodgement_date. EPC features for these sales may differ from Part 4.
 - Exclusions expressed as rules rather than certificate IDs, so they apply to new data
 - Rule simplification: all floor areas <= 9 sqm excluded (Part 1 proposed flagging 1-room flats); no effect on current data
+- New tie-break rule on 'inspection_to_sale' means EPC has newer lodgement_date and less likely to be expired
 
 ## Validation against Parts 2-4
 
@@ -155,12 +156,12 @@ Functions return only the DataFrame. The pipeline class records counts around ea
 | read_price_paid | rows | 135,557 | 135,557 | ✓ |
 | read_epc | rows | 216,054 | 216,054 | ✓ |
 | filter_local_authorities | rows dropped | 4 | 4 | ✓ |
-| filter_subset_matches | unique sales | 105,419 | | |
-| drop_ambiguous_matches | unique sales dropped | 975 | | |
+| filter_subset_matches | unique sales | 105,419 | 105,419| ✓ |
+| drop_ambiguous_matches | unique sales dropped | 975 | 975| ✓ |
 | select_presale_epc | rows | 91,150 | 91,150 | ✓ |
 | select_final_columns | columns | 36 | 36 | ✓ |
-| add_expired_flag | expired | 66 | | |
-| nullify_invalid_values | converted (heated rooms / floor height / property_type / tenure / built_form) | 134 / 1,429 / 0 / 21,458 / 27 | | |
-| apply_exclusions | rows dropped per rule (small area / large area / efficiency / age band) | 1 / 3 / 0 / 3 | | |
-| impute_floor_height | imputed | 2,049 | | |
-| final | rows | 91,143 | | |
+| add_expired_flag | expired | 66 | 62| ≈ tie-break (later lodgement → fewer expired) |
+| nullify_invalid_values | converted (heated rooms / floor height / property_type / tenure / built_form) | 134 / 1,429 / 0 / 21,458 / 27 | 134 / 1,427 / 0 / 21,458 / 27 | ✓ |
+| apply_exclusions | rows dropped per rule (small area / large area / efficiency / age band) | 1 / 3 / 0 / 3 | 7 (total)| ✓ |
+| impute_floor_height | imputed | 2,049 | 2,046 | ≈ tie-break |
+| final | rows | 91,143 | 91,143| ✓ |
