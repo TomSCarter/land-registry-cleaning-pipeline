@@ -1,16 +1,36 @@
 ## Part 5 - Pipeline
 
-Refactoring the cleaning and matching steps from Parts 2-4 into reusable functions in `src/cleaning/`, run in order by a pipeline class.
+Refactored the cleaning and matching steps from Parts 2-4 into reusable functions in `src/cleaning/`, run in order by a pipeline class. The full pipeline runs from the raw files to the cleaned dataset with one command:
+
+    python run_pipeline.py
+
+(run from the project root, with the virtual environment active)
+
+### Project structure
+
+    Week_10_land_registry/
+    ├── run_pipeline.py          # creates the pipeline, runs it, prints the report
+    └── src/
+        └── cleaning/
+            ├── config.py
+            ├── load.py
+            ├── normalise.py
+            ├── match.py
+            ├── features.py
+            ├── clean.py
+            ├── save.py
+            └── pipeline.py      # CleaningPipeline class
 
 ## Pipeline design
 
-Functions return only the DataFrame. The pipeline class records counts around each step; expected values are in the validation table below.
+Functions return only the DataFrame. The pipeline class records counts after each step; expected values are in the validation table below.
 
 ### 0. config (config.py)
 
 - **PROJECT_ROOT / DATA_PATH / PROCESSED_PATH**: built from the config file's own location, so paths work wherever the code is run from
 - **PP_FILENAME**: glob pattern for Price Paid CSVs ('ppd_data*.csv')
 - **EPC_FILENAME**: EPC CSV file name
+- **PROCESSED_FILENAME**: output Parquet file name
 - **EPC_COLS**: the 28 EPC columns kept in Part 1
 - **TARGET_LOCAL_AUTHORITIES**: the five Oxfordshire district codes
 - **PP_ADDRESS_COLS**: ['paon', 'saon', 'street', 'locality', 'postcode']
@@ -18,7 +38,7 @@ Functions return only the DataFrame. The pipeline class records counts around ea
 - **FINAL_COLS / RENAME_MAP**: columns kept after matching and their new names
 - **AGE_BINS / AGE_LABELS**: EPC age band edges and labels
 - **EPC_VALIDITY_YEARS**: 10
-- **THRESHOLDS**: min floor area (9 sqm), large floor area rule (> 2000 sqm and <= 7 rooms or rooms missing), min floor height (1.5 m), efficiency rule (> 110 and consumption > 200 for flats/maisonettes), min construction_age_band length (4 characters)
+- **THRESHOLDS**: min floor area (9 sqm), large floor area rule (> 2000 sqm and <= 7 habitable rooms or rooms missing), min floor height (1.5 m), efficiency rule (> 110 and consumption > 200 for flats/maisonettes), min construction_age_band length (4 characters)
 - **PLACEHOLDERS**: {'property_type': 'Not Recorded', 'built_form': 'Not Recorded', 'tenure': 'unknown'}
 
 ### 1. load (load.py)
@@ -119,49 +139,62 @@ Functions return only the DataFrame. The pipeline class records counts around ea
 #### Impute floor height and add flag
 - **Name:** impute_floor_height
 - **Inputs:** df
-- **Output:** df with 'floor_height_imputed'
+- **Output:** df with 'floor_height_imputed'. Median is calculated from the whole dataset; Week 13 modelling should recalculate it from training data only
 
 ### 6. save (save.py)
 
 #### Write to data/processed/ as Parquet
 - **Name:** save_parquet
-- **Inputs:** df, processed_path
-- **Output:** file on disk
+- **Inputs:** df, processed_path, processed_filename
+- **Output:** Parquet file on disk (creates the folder if missing); returns the file path
 
 ### 7. pipeline (pipeline.py)
 
 #### Run stages 1-6 in order and collect counts per step
 - **Name:** CleaningPipeline (class with a run method)
 - **Inputs:** config
-- **Output:** final DataFrame and run report
+- **Output:** final DataFrame and run report (rows per step, plus unique sales, expired count, null counts and imputed count where relevant)
 
 ## Implementation notes
 
-- Functions return only a DataFrame; the pipeline class records counts before/after each step
+- Functions return only a DataFrame; the pipeline class records counts after each step
 - Functions work on a copy and never modify their input
+- The pipeline reads every setting from the config passed in, so a different config (e.g. an older EPC extract) needs no code changes
 - Missing input files raise FileNotFoundError with a clear message (tested deliberately)
 - Price Paid files are read in sorted order so row order is reproducible
 - UPRN cast to pandas nullable 'Int64' (NumPy int64 cannot hold nulls)
 - EPC filtered to the five target local authorities (Part 1 decision, not applied in Parts 2-4): 4 rows dropped, final match count unchanged at 91,150, confirming these border properties never matched
 - Combined address: runs of whitespace collapsed to one space (cosmetic; token sets unaffected)
-- Pre-sale EPC selection: ties on inspection_to_sale broken by latest lodgement_date (likely a corrected certificate). Previously arbitrary. Ties found: 670 sales (0.7%) had two or more certificates tied for closest pre-sale inspection; previously chosen arbitrarily, now resolved by latest lodgement_date. EPC features for these sales may differ from Part 4.
+- Pre-sale EPC selection: ties on inspection_to_sale broken by latest lodgement_date (likely a corrected certificate). Previously arbitrary. 670 sales (0.7%) had two or more certificates tied for closest pre-sale inspection. EPC features for these sales may differ from Part 4; this explains the small differences in the validation table (a later lodgement makes a certificate younger, so fewer expire)
 - Exclusions expressed as rules rather than certificate IDs, so they apply to new data
 - Rule simplification: all floor areas <= 9 sqm excluded (Part 1 proposed flagging 1-room flats); no effect on current data
-- New tie-break rule on 'inspection_to_sale' means EPC has newer lodgement_date and less likely to be expired
+- Output saved as Parquet (requires pyarrow), which keeps dtypes such as datetimes, Int64 and the ordered age band category; round-trip test passed
+- Development used a checkpoint of the matched data to avoid re-running the slow subset test (ca. 2 min) on every change
 
 ## Validation against Parts 2-4
+
+Final run from the terminal (`python run_pipeline.py`):
 
 | Step | Measure | Expected | Pipeline | Match |
 |---|---|---|---|---|
 | read_price_paid | rows | 135,557 | 135,557 | ✓ |
 | read_epc | rows | 216,054 | 216,054 | ✓ |
 | filter_local_authorities | rows dropped | 4 | 4 | ✓ |
-| filter_subset_matches | unique sales | 105,419 | 105,419| ✓ |
-| drop_ambiguous_matches | unique sales dropped | 975 | 975| ✓ |
+| filter_subset_matches | unique sales | 105,419 | 105,419 | ✓ |
+| drop_ambiguous_matches | unique sales dropped | 975 | 975 | ✓ |
 | select_presale_epc | rows | 91,150 | 91,150 | ✓ |
 | select_final_columns | columns | 36 | 36 | ✓ |
-| add_expired_flag | expired | 66 | 62| ≈ tie-break (later lodgement → fewer expired) |
-| nullify_invalid_values | converted (heated rooms / floor height / property_type / tenure / built_form) | 134 / 1,429 / 0 / 21,458 / 27 | 134 / 1,427 / 0 / 21,458 / 27 | ✓ |
-| apply_exclusions | rows dropped per rule (small area / large area / efficiency / age band) | 1 / 3 / 0 / 3 | 7 (total)| ✓ |
+| add_expired_flag | expired | 66 | 62 | ≈ tie-break |
+| nullify_invalid_values | converted (heated rooms / floor height / property_type / tenure / built_form) | 134 / 1,429 / 0 / 21,458 / 27 | 134 / 1,427 / 0 / 21,458 / 27 | ≈ tie-break (floor height) |
+| nullify_invalid_values | total nulls after (heated rooms / floor height / tenure / built_form) | 29,606 / 2,049 / 21,458 / 2,036 | 29,603 / 2,046 / 21,458 / 2,040 | ≈ tie-break |
+| apply_exclusions | rows dropped | 7 (1 / 3 / 0 / 3 by rule) | 7 (total) | ✓ |
 | impute_floor_height | imputed | 2,049 | 2,046 | ≈ tie-break |
-| final | rows | 91,143 | 91,143| ✓ |
+| final | rows | 91,143 | 91,143 | ✓ |
+
+All differences are small and explained by the tie-break rule. The 2,046 imputed values equal the floor height nulls after nullifying, confirming none of the 7 excluded rows had a missing floor height.
+
+## Deferred
+
+- Re-run with an EPC extract from 2012 to improve the early-year match rate: Week 21-22 (config change only)
+- pytest unit tests for the cleaning functions: Week 15 testing primer
+- Faster subset test (zip instead of row-wise apply): only if run time becomes a problem
