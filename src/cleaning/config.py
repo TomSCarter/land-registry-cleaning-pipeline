@@ -24,8 +24,8 @@ FINAL_COLS = ['unique_id', 'price_paid', 'deed_date', 'address_x', 'saon', 'paon
                 'energy_consumption_current', 'extension_count', 'floor_height', 'heating_cost_current', 
                 'inspection_date', 'lodgement_date', 'number_habitable_rooms', 'number_heated_rooms', 
                 'potential_energy_efficiency', 'property_type_y', 'tenure', 'total_floor_area', 
-                'transaction_type', 'uprn', 'uprn_source', 'time_to_sale']
-RENAME_MAP = {'property_type_x':'property_subtype', 'property_type_y':'property_type', 'time_to_sale':'inspection_to_sale', 'address_x': 'address'}
+                'transaction_type', 'uprn', 'uprn_source', 'inspection_to_sale']
+RENAME_MAP = {'property_type_x':'property_subtype', 'property_type_y':'property_type', 'address_x': 'address'}
 AGE_BINS = [0, 365, 1095, 1825, 3650, float('inf')]
 AGE_LABELS = ['0-1 years', '1-3 years', '3-5 years', '5-10 years', '10 years+']
 EPC_VALIDITY_YEARS = 10
