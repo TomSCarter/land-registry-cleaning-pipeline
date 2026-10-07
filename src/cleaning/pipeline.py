@@ -1,7 +1,5 @@
-
 import pandas as pd
-from src.cleaning import load, normalise, match
-from src.selection import clean, features, save
+from src.cleaning import load, normalise, match, clean, features, save
 
 class CleaningPipeline:
     """Merges Land Registry Price Paid records with Energy Performance Certificate records, cleans and adds features"""
@@ -17,6 +15,7 @@ class CleaningPipeline:
         self.report.append(row)
 
     def run(self):
+        self.report = []
         pp = load.read_price_paid(self.config.DATA_PATH, self.config.PP_FILENAME)
         self._record('load.read_price_paid', pp)
         epc = load.read_epc(self.config.DATA_PATH, self.config.EPC_FILENAME, self.config.EPC_COLS)
