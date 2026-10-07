@@ -7,4 +7,3 @@ def save_parquet(df, processed_path, processed_filename):
     file = folder / processed_filename
     df.to_parquet(file, index=False)
     return file
-

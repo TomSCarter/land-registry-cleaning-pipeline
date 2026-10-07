@@ -38,4 +38,5 @@ THRESHOLDS = {'min_floor_area': 9, # exclude floor areas <=9 sqm
               'eff_cutoff_types':['Flat', 'Maisonette'], # exclude efficiency > 110 and consumption > 200 for flats/maisonettes
                'const_age_len_min': 4 } # exclude construction age band values < 4 characters
 PLACEHOLDERS = {'property_type': 'Not Recorded', 'built_form': 'Not Recorded', 'tenure': 'unknown'}
+PROCESSED_FILENAME = 'pp_epc_oxfordshire_2015_2025.parquet'
 
