@@ -1,6 +1,6 @@
 
 import pandas as pd
-from src.cleaning import config, load, normalise, match
+from src.cleaning import load, normalise, match
 from src.selection import clean, features, save
 
 class CleaningPipeline:
@@ -17,9 +17,9 @@ class CleaningPipeline:
         self.report.append(row)
 
     def run(self):
-        pp = load.read_price_paid(config.DATA_PATH, self.config.PP_FILENAME)
+        pp = load.read_price_paid(self.config.DATA_PATH, self.config.PP_FILENAME)
         self._record('load.read_price_paid', pp)
-        epc = load.read_epc(config.DATA_PATH, self.config.EPC_FILENAME, self.config.EPC_COLS)
+        epc = load.read_epc(self.config.DATA_PATH, self.config.EPC_FILENAME, self.config.EPC_COLS)
         self._record('load.read_epc', epc)
         epc = load.filter_local_authorities(epc, self.config.TARGET_LOCAL_AUTHORITIES)
         self._record('load.filter_local_authorities', epc)
@@ -56,11 +56,15 @@ class CleaningPipeline:
         df = features.add_calendar_features(df)
         self._record('features.add_calendar_features', df)
         df = clean.nullify_invalid_values(df, self.config.PLACEHOLDERS, self.config.THRESHOLDS['min_floor_height'])
-        self._record('clean.nullify_invalid_values', df)
+        self._record('clean.nullify_invalid_values', df, {
+            'floor_height_nulls': df['floor_height'].isna().sum(), 
+            'tenure_nulls': df['tenure'].isna().sum(), 
+            'number_heated_rooms_nulls': df['number_heated_rooms'].isna().sum(), 
+            'built_form_nulls': df['built_form'].isna().sum()})
         df = clean.apply_exclusions(df, self.config.THRESHOLDS)
         self._record('clean.apply_exclusions', df)
         df = clean.impute_floor_height(df)
-        self._record('clean.impute_floor_height', df)
+        self._record('clean.impute_floor_height', df, {'imputed_count': df['floor_height_imputed'].sum()})
         save.save_parquet(df, self.config.PROCESSED_PATH, self.config.PROCESSED_FILENAME)
         self._record('save.save_parquet', df)
         return df, pd.DataFrame(self.report)
