@@ -1,0 +1,8 @@
+pandas>=3.0
+numpy>=2.5
+pyarrow>=25.0
+
+# for the notebooks
+matplotlib>=3.11
+seaborn>=0.13
+ipykernel
