@@ -14,7 +14,7 @@ Neither dataset is included in the repo. To reproduce the results:
 
 **Energy Performance Certificates.** Download from [Get energy performance of buildings data](https://get-energy-performance-data.communities.gov.uk/) (you need a GOV.UK One Login account). Select domestic certificates lodged between Jan 2015 and Dec 2025 for the same five local authorities. Save the CSV in `data/raw/` as `EDC_OXFORDSHIRE_2015_2025.csv`, or change `EPC_FILENAME` in `src/cleaning/config.py`. A data dictionary with definitions for the columns can be found at [Link to Domestic EPC Data Dictionary](https://get-energy-performance-data.communities.gov.uk/guidance/data-dictionary).
 
-Contains HM Land Registry data, Crown copyright and database right 2021. This data is licensed under the Open Government Licence v3.0.
+Contains HM Land Registry data © Crown copyright and database right 2021. This data is licensed under the Open Government Licence v3.0.
 
 ## Running it
 
@@ -47,6 +47,7 @@ Run from the project root. It takes a few minutes, mostly spent on the address m
 | Final, after exclusions | 91,143 | 67.2% |
 
 For comparison, a published linkage of the same two datasets by UCL researchers reached 79%, though with a different scope and method.
+
 Chi, B., Dennett, A., Oléron-Evans, T. and Morphet, R. (2021). "A new attribute-linked residential property price dataset for England and Wales, 2011–2019." UCL Open: Environment, 2(7), 1–25. [DOI link to paper at publisher](https://doi.org/10.14324/111.444/ucloe.000019) [Repository version](https://pmc.ncbi.nlm.nih.gov/articles/PMC10208353/pdf/ucloe-03-019.pdf)
 
 ## Limitations
