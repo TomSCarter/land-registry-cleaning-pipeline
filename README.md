@@ -68,3 +68,7 @@ Chi, B., Dennett, A., Oléron-Evans, T. and Morphet, R. (2021). "A new attribute
 ├── logs/                  # notes and decisions for each stage
 └── data/                  # raw, interim and processed (not tracked)
 ```
+
+## Licence
+
+Code is MIT licensed. The data is not included and is subject to its own licences (see Data above).
