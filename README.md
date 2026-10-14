@@ -4,7 +4,7 @@ This project links every residential sale in Oxfordshire from 2015 to 2025 (HM L
 
 The two datasets share no common ID for historical sales, so they are matched on address. The pipeline cleans both datasets, matches them, picks the most relevant EPC record for each sale and writes out a single cleaned table.
 
-I built this as the Week 10 project of a data science training plan. The working notes for each stage are in `logs/`.
+I built this as part of a self-directed data science training plan. The working notes for each stage are in `logs/`.
 
 ## Data
 
