@@ -46,7 +46,7 @@ Run from the project root. It takes a few minutes, mostly spent on the address m
 | With a certificate from before the sale | 91,150 | 67.2% |
 | Final, after exclusions | 91,143 | 67.2% |
 
-For comparison, a published linkage of the same two datasets by UCL researchers reached 79%, though with a different scope and method.
+For comparison, a published linkage of the same datasets for England and Wales (Chi et al., 2021) matched 93% of 2011–2019 sales before cleaning, using EPCs going back to 2008. This pipeline's overall rate is lower mainly because the EPC extract starts in 2015; by 2025, when most sales have a certificate within the extract, the match rate reaches about 88%. The UCL study also picks the closest certificate before or after the sale, whereas this pipeline only uses certificates from before the sale.
 
 Chi, B., Dennett, A., Oléron-Evans, T. and Morphet, R. (2021). "A new attribute-linked residential property price dataset for England and Wales, 2011–2019." UCL Open: Environment, 2(7), 1–25. [DOI link to paper at publisher](https://doi.org/10.14324/111.444/ucloe.000019) [Repository version](https://pmc.ncbi.nlm.nih.gov/articles/PMC10208353/pdf/ucloe-03-019.pdf)
 
