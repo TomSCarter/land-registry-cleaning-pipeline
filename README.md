@@ -62,13 +62,15 @@ Chi, B., Dennett, A., Oléron-Evans, T. and Morphet, R. (2021). "A new attribute
 ## Structure
 
 ```
-├── run_pipeline.py        # runs the full pipeline
+├── run_pipeline.py          # creates the pipeline, runs it, prints the report
+├── export_pre_clean.py      # runs stages 1-4 only and saves the pre-clean data
 ├── requirements.txt
 ├── src/cleaning/          # config, load, normalise, match, features, clean, save, pipeline
 ├── notebooks/             # exploration and development, one per stage
 ├── logs/                  # notes and decisions for each stage
 └── data/                  # raw, interim and processed (not tracked)
 ```
+`export_pre_clean.py` produces the input for a Power Query re-implementation of the cleaning stage, in [powerbi_training_log](https://github.com/TomSCarter/powerbi_training_log).
 
 ## Licence
 

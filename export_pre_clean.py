@@ -2,6 +2,8 @@ import pandas as pd
 from src.cleaning import load, normalise, match, features, save
 from src.cleaning import config
 
+# The script copies the order of stages 1-4 from `pipeline.py`, so it must be updated if those stages change.
+
 class PreCleanExport:
     """Merges Land Registry Price Paid records with Energy Performance Certificate records and adds features. *Cleaning stage removed*"""
 
