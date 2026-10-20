@@ -13,7 +13,7 @@ def nullify_invalid_values(df, placeholders, min_floor_height):
 def apply_exclusions(df, thresholds):
     """Apply exclusions (as rules)"""
     out = df.copy()
-    out = out[(out['total_floor_area'] > thresholds['min_floor_area'])]
+    out = out[(out['total_floor_area'] > thresholds['min_floor_area'])] # excludes nulls too
     out = out[~(
         (out['total_floor_area'] > thresholds['large_floor_area']) 
         & ((out['number_habitable_rooms'] <= thresholds['large_floor_area_rooms']) 
