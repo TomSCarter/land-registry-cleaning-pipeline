@@ -29,7 +29,7 @@ RENAME_MAP = {'property_type_x':'property_subtype', 'property_type_y':'property_
 AGE_BINS = [0, 365, 1095, 1825, 3650, float('inf')]
 AGE_LABELS = ['0-1 years', '1-3 years', '3-5 years', '5-10 years', '10 years+']
 EPC_VALIDITY_YEARS = 10
-THRESHOLDS = {'min_floor_area': 9, # exclude floor areas <=9 sqm
+THRESHOLDS = {'min_floor_area': 9, # exclude floor areas <=9 sqm (and nulls)
               'large_floor_area': 2000, # exclude floor areas > 2000 sqm and <= 7 rooms or rooms missing
               'large_floor_area_rooms':7, # exclude floor areas > 2000 sqm and <= 7 rooms or rooms missing
               'min_floor_height':1.5, # values < 1.5 m converted to null (not excluded)
