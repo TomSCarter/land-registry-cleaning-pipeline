@@ -74,3 +74,7 @@
     - Exclusions up from 7 to 66
     - Match rate per year to be calculated
     - Are floor area nulls in the final table?
+
+## Match rate over time comparison
+[figure]
+
