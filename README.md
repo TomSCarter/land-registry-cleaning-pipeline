@@ -67,8 +67,9 @@ The comparison is in `notebooks/part_6_epc_2008-2025_extension.ipynb`, with find
 - **Matching on word sets loses repeated words.** An address like "Riverside Court 9 9 West Way" becomes the same set as the block's address without the flat number, which makes it ambiguous. These cases are dropped rather than resolved.
 - **Short addresses can match unrelated longer ones** at the same postcode (for example "4 Churchill Road" and "Apartment 4, The Lofts, 7 Churchill Road"). Most of these show up as ambiguous and are dropped.
 - **New-build certificates don't record room counts,** so about 28% of the final table has no room count. Floor area is complete and is the better size measure.
-- **Tenure is missing for about 30.5% of sales,** mostly because older certificates (pre-2015) often don't record it.
+- **EPC tenure (owner-occupied/rented) is missing for about 30.5% of sales,** mostly because older certificates (pre-2015) often don't record it.
 - **Some sales had two certificates tied for closest inspection date.** The more recently lodged one is used.
+- **EPC rating methods have changed over the years,** so 2008-2014 certificates arent strictly comparable to recent ones.
 
 ## Structure
 
