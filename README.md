@@ -52,7 +52,7 @@ Chi, B., Dennett, A., Oléron-Evans, T. and Morphet, R. (2021). "A new attribute
 
 ## Extending EPC coverage back to 2008
 
-The first version of the pipeline used EPCs lodged from 2015 only, and matched 67.2% of sales. The match rate rose steadily with sale year: 3.5% in January 2015 (35.5% across 2015), rising to 87.1% in 2025. Certificates are valid for 10 years, so many early sales that relied on certificates issued before 2015 weren't in the extract.
+The first version of the pipeline used EPCs lodged from 2015 only, and matched 67.2% of sales. The match rate rose steadily with sale year: 3.5% in January 2015 (35.5% across 2015), rising to 87.1% in 2025. Certificates are valid for 10 years, so many early sales relied on certificates issued before 2015, which weren't in the extract.
 
 Re-running the pipeline with certificates from the start of the register (Sept 2008) raised the overall match rate to 84.4% and removed most of the upward trend with time. The 2015 rate rose from 35.5% to 81.9%, while 2025 changed by about one percentage point.
 
