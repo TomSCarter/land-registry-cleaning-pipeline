@@ -5,7 +5,7 @@ DATA_PATH = PROJECT_ROOT / 'data' / 'raw'
 PROCESSED_PATH = PROJECT_ROOT / 'data' / 'processed'
 
 PP_FILENAME = 'ppd_data*.csv'
-EPC_FILENAME = 'EDC_OXFORDSHIRE_2015_2025.csv'
+EPC_FILENAME = 'EDC_OXFORDSHIRE_2008_2025.csv'
 EPC_COLS = [
     'certificate_number', 'address1', 'address2', 'address3', 'postcode',
     'posttown', 'address', 'local_authority', 'local_authority_label',
@@ -38,5 +38,5 @@ THRESHOLDS = {'min_floor_area': 9, # exclude floor areas <=9 sqm
               'eff_cutoff_types':['Flat', 'Maisonette'], # exclude efficiency > 110 and consumption > 200 for flats/maisonettes
                'const_age_len_min': 4 } # exclude construction age band values < 4 characters
 PLACEHOLDERS = {'property_type': 'Not Recorded', 'built_form': 'Not Recorded', 'tenure': 'unknown'}
-PROCESSED_FILENAME = 'pp_epc_oxfordshire_2015_2025.parquet'
+PROCESSED_FILENAME = 'pp_epc_oxfordshire_2015_2025_v2.parquet'
 
