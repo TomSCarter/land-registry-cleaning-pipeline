@@ -1,5 +1,6 @@
 import pandas as pd
 from src.cleaning import load, normalise, match, clean, features, save
+import datetime
 
 class CleaningPipeline:
     """Merges Land Registry Price Paid records with Energy Performance Certificate records, cleans and adds features"""
@@ -13,6 +14,7 @@ class CleaningPipeline:
         if extra is not None:
             row.update(extra)
         self.report.append(row)
+        print(f"{datetime.datetime.now().strftime('%X')}: {step}, row count: {len(data):,}")
 
     def run(self):
         self.report = []
