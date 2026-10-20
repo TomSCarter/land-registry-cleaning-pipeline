@@ -85,7 +85,7 @@ Pipeline: A timestamped progress line was added _record in pipeline.py, giving r
 - Expired certificates rose from 62 to 1,151, flagged with the exisiting EPC_expired column
 
 ## Match rate over time comparison
-[match_rate_vs_date_v2]
+![Match rate by month of sale, v1 vs v2](figures/match_rate_vs_date_v2.png)
 
 Comparing the match rate over time in the v1 and v2 outputs.
 - The new output shows a roughly flat match rate over time, a marked improvement on the upward trend in v1. The improvement is particularly strong at older years (e.g. 4% to 84% (+80 points) in Jan 2015)
