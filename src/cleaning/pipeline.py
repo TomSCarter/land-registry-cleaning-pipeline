@@ -44,6 +44,13 @@ class CleaningPipeline:
         self._record('match.merge_on_postcode', df)
         df = match.filter_subset_matches(df)
         self._record('match.filter_subset_matches', df, {'unique_sales': df['unique_id'].nunique()})
+        
+        match_table = match.select_match_columns(df, self.config.MATCH_TABLE_COLS)
+        self._record('match.select_match_columns', match_table)
+
+        save.save_parquet(match_table, self.config.PROCESSED_PATH, self.config.MATCH_TABLE_FILENAME)
+        self._record('save.match_table', match_table)
+
         df = match.drop_ambiguous_matches(df)
         self._record('match.drop_ambiguous_matches', df, {'unique_sales': df['unique_id'].nunique()})
         df = match.select_presale_epc(df)
