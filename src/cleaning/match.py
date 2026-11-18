@@ -12,6 +12,11 @@ def filter_subset_matches(merged_df):
     subset_matches = merged_df[merged_df.apply(compare, axis=1)]
     return subset_matches
 
+def select_match_columns(subset_matches, match_cols):
+    """Select columns for match table only"""
+    out = subset_matches[match_cols]
+    return out
+
 def drop_ambiguous_matches(subset_matches):
     """Remove ambiguous multi-UPRN matches"""
     multi_match = subset_matches.groupby('unique_id')['uprn'].nunique()
