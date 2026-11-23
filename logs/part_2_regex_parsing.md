@@ -47,42 +47,42 @@
 
 - Investigating unmatched set
     - Sample of 10 transactions from price paid set
-        - 11 Harrier Drive OX11 6BU
+        - Sale 1 (number + street)
             - sold in 2017 and 2022
-            - No 11 in EPC set
+            - Road found but house number missing in EPC set
             - 2014 certificate found in pre-2015
-        - 1  WESTMINSTER WAY  OX2 0PZ
+        - Sale 2 (number + street)
             - sold in 2018
             - Postcode not in EPC set
             - No result found in pre-2015
-        - 64  EDGEWORTH DRIVE  OX18 3LW
+        - Sale 3 (number + street)
             - sold in 2018
-            - No 64 in EPC set
+            - Road found but house number missing in EPC set
             - 2012 certificate found in pre-2015
-        - 12  PARKERS CIRCUS  OX7 5LZ
+        - Sale 4 (number + street)
             - sold 2018
-            - No 12 in EPC set
+            - Road found but house number missing in EPC set
             - 2009 certificate found in pre-2015
-        - PERPETUAL HOUSE 2 STATION ROAD  RG9 1AF
-            - Found in EPC set. Did not match due to inclusion of 'HENLEY-ON-THAMES' in address3 in the EPC (and not in locality in PP)
+        - Sale 5 (name + number + street)
+            - Found in EPC set. Did not match due to inclusion of  town name in address3 in the EPC (and not in locality in PP)
             - sold 2015
-        - HAZLETON HOUSE 15 1 HIGH STREET  OX9 2BZ
+        - Sale 6 (name + number + street)
             - sold 2015
-            - No 15 or hazleton house in EPC set
-            - 2012 certificate for 15c in pre-2015
-        - 5A  OAKS ROAD SHIPLAKE RG9 3JH
+            -  Road found but house number and house name missing in EPC set
+            - 2012 certificate for suffixed number in pre-2015
+        - Sale 7 (number + street + locality)
             - sold 2021
-            - Found in EPC set. Did not match due to inclusion of 'HENLEY-ON-THAMES' in address3 in the EPC (in addition to the Shiplake locality in PP)
-        - LASHLAKE HOUSE  AYLESBURY ROAD  OX9 3AU
+            - Found in EPC set. Did not match due to inclusion of town name in address3 in the EPC (in addition to the a locality in PP not in the EPC)
+        - Sale 8 (name + street)
             - sold 2015
-            - No Lashlake house in EPC set
+            - House name not in EPC set
             - No certificate in pre-2015
-        - 1  CANTOR ROW  OX14 2FY
+        - Sale 9 (number + street)
             - sold 2024
-            - No 1 in EPC set or pre-2015
-        - 57  BALLARD CHASE  OX14 1XQ
+            - Road found but house number missing in EPC set (post or pre-2015)
+        - Sale 10 (number + street)
             - sold 2015
-            - No 57 in EPC set
+            - Road found but house number missing in EPC set
             - 2014 certificate in pre-2015
         - Searched epc set by postcode
         - 3 postcodes no present in epc set
@@ -94,16 +94,17 @@
     - A meaningful share of the unmatched price paid records are likely to have no counterpart in the 2015-2025 EPC dataset
         - EPCs are valid for 10 years, so it is possible they may have a certificate issued before 2015 that was still valid at the time of the sale. In the sample above 40-50% did have a valid pre-2015 certificate at the date of sale.
     - Unmatched set contains slightly more expensive (median 370000 vs 365000, mean 663000 vs 513000) sales, that are less likely to be new builds (18% vs 10%) and have slightly older deed_dates (mean = 2019-12-06 vs 2020-07-01).
-    - The 5A OAKS ROAD and PERPETUAL HOUSE 2 examples show that exact matching of the address tokens is not ideal. They are failing to match due to an additional token in the EPC set (HENLEY-ON-THAMES). Subset matching would improve this
+    - The sale 5 and sale 7 examples show that exact matching of the address tokens is not ideal. They are failing to match due to an additional token in the EPC set (town name). Subset matching would improve this
 
 = Third join (subset matching)
     - Matched on postcode then on PP address_tokens being a subset of EPC address_tokens
     - Gave 105419 matches (77.8% match rate)
     - 975 unique_ids matched to >1 uprn (in EPC set)
-        - e.g. 4 Churchill road OX5 1BN subset matched to both correct and 'APARTMENT 4 THE LOFTS 7 CHURCHILL ROAD OX5 1BN'
-            - Fundamental flaw to subset matching
-        - RIVERSIDE COURT 9 9 WEST WAY  OX2 0FL matched to 43 uprn's. Happens because one of the '9's is lost when a token set is made. Which then matches with the many flats at 'RIVERSIDE COURT 9 West Way OX2 0FL'.
-            - 3113 records in full PP set have fewer values in 'address_tokens' than words in 'address'
+        - e.g. [invented addresses to illustrate point] 
+            - 8 Churchill lane OX1 1BF subset matched to both correct and 'APARTMENT 8 THE LOFTS 7 CHURCHILL LANE OX1 1BF'
+                - Fundamental flaw to subset matching
+            - LAKESIDE COURT 8 8 WEST WAY  OX1 0FL matched to 43 uprn's. Happens because one of the '8's is lost when a token set is made. Which then matches with the many flats at 'LAKESIDE COURT 8 West Way OX1 0FL'.
+                - 3113 records in full PP set have fewer values in 'address_tokens' than words in 'address'
         - 219 (22.5%) of the 975 records lost duplicate words during the token set formation, hindering subset matching.
         - Would be possible to refactor subset matching to avoid losing duplicates to sets (e.g. use ordered lists) but not implemented due to time constraints.
         - Drop the 975 records
@@ -113,8 +114,8 @@
     Summary:
     - Subset matching recovered 4792 additional usable matches over exact matching and improved match rate from 63.7% to 67.2%
     - Identified 2 key failure modes
-        - Token deduplication removing a distinguishing repeated number (Riverside Court)
-        - A short/plain address being a structural subset of an unrelated longer address at the same postcode (Churchill Road)
+        - Token deduplication removing a distinguishing repeated number (Lakeside Court)
+        - A short/plain address being a structural subset of an unrelated longer address at the same postcode (Churchill Lane)
         - Third Join Funnel
             - 135,557 total Price Paid property transactions
                 - 216,054 EPC records
