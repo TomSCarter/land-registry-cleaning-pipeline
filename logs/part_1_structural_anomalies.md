@@ -300,6 +300,7 @@
     - Each 'uprn' has up to 50 'certificate_number' associated with it. 26776 flagged as duplicated
         - *Proposed: select one certificate per UPRN in Day 3 (most likely most recent inspection_date at or before the sale)*
 - Categorical values
+
 | Column | Unique values | Top values | Placeholders / anomalies | Proposed treatment |
 |---|---|---|---|---|
 | `property_type` | 5|House, Flat |'Not Recorded'  (1305, 0.6%)  |None needed|
@@ -309,6 +310,7 @@
 | `transaction_type` |14 |Marketed sale, Rental  |Contains 'None of the above' |Likely none needed as less common types may not correspond to a sale |
 | `current_energy_rating` | 7|C, D, B | | |
 | `uprn_source` |2 |Energy Assessor, Address Matched  | | |
+
 - 'inspection_date' & 'lodgement_date'
     - format: YYYY-MM-DD
     - 'lodgement_date' fully within intended 2015-01-01 - 2015-12-31 limits
